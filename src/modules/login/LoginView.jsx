@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { memo, useEffect } from "react";
 
 const LoginView = ({
@@ -9,6 +10,7 @@ const LoginView = ({
   buttonDisabled,
   loading,
 }) => {
+  const router = useRouter();
 
 
   
