@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 
 const LoginView = ({
   message,
@@ -9,6 +9,17 @@ const LoginView = ({
   buttonDisabled,
   loading,
 }) => {
+
+
+  
+  useEffect(() => {
+    const token = Cookies.get("token");
+
+    if (token) {
+      console.info("Sesión activa encontrada. Redirigiendo al dashboard...");
+      router.push("/dashboard");
+    }
+  }, [router]);
   return (
     <div className="flex flex-col md:flex-row w-full h-screen">
       <div className="bg-gradient-to-b from-blue-500 to-blue-900 md:w-[60%] w-full h-full flex items-center justify-center p-4">
