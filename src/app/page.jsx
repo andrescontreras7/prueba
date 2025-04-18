@@ -3,24 +3,25 @@
 import { AuthContext } from "@/context/AuthContext";
 import LoginView from "@/modules/login/LoginView";
 import { useRouter } from "next/navigation";
-import React from "react";
-import { useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 
 const page = () => {
   const router = useRouter();
   const { login } = useContext(AuthContext);
   const [message, setMessage] = useState("");
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [loading, setLoading] = useState(false); // 🆕
   const [data, setData] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
 
     if (name === "email") {
-      if (!value.includes("@")) {
-        setMessage("Please enter a valid email address");
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        setMessage("Please enter a valid email address.");
         setButtonDisabled(true);
+        return;
       } else {
         setMessage("");
       }
@@ -28,8 +29,9 @@ const page = () => {
 
     if (name === "password") {
       if (value.length < 2) {
-        setMessage("Password must be at least 6 characters long");
+        setMessage("La contraseña debe tener al menos 2 caracteres.");
         setButtonDisabled(true);
+        return;
       } else {
         setMessage("");
       }
@@ -38,30 +40,38 @@ const page = () => {
     const updatedData = { ...data, [name]: value };
     setData(updatedData);
 
-    if (updatedData.email?.includes("@") && updatedData.password?.length >= 2) {
+    if (
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedData.email) &&
+      updatedData.password?.length >= 2
+    ) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
   };
+
   const onSubmit = async () => {
+    setLoading(true);
     try {
-      const ok = await login(data.email, data.password);
-      console.log(ok);
+      const result = await login(data.email, data.password);
       setMessage("");
-      if (ok) {
+      if (result.success) {
         router.push("/dashboard");
+      } else {
+        setMessage(result.message || "Credenciales inválidas.");
       }
     } catch (error) {
-      console.log(error);
-      setMessage("Invalid credentials");
+      setMessage("Ocurrió un error inesperado.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <LoginView
       message={message}
-      buttonDisabled={buttonDisabled}
+      buttonDisabled={buttonDisabled || loading}
+      loading={loading}
       onSubmit={onSubmit}
       handleChange={handleChange}
     />

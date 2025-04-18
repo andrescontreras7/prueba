@@ -1,15 +1,25 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Home, Users, Settings, Menu, X, BarChart2, FileText, Mail, LogOut } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react";
+import {
+  Home,
+  Users,
+  Settings,
+  Menu,
+  X,
+  BarChart2,
+  FileText,
+  Mail,
+  LogOut,
+} from "lucide-react";
+import Link from "next/link";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen)
-  }
+    setIsOpen(!isOpen);
+  };
 
   const menuItems = [
     { name: "Dashboard", icon: Home, href: "/dashboard" },
@@ -18,17 +28,17 @@ const Sidebar = () => {
     { name: "Messages", icon: Mail, href: "/dashboard" },
     { name: "Users", icon: Users, href: "/dashboard" },
     { name: "settings", icon: Settings, href: "/dashboard" },
-    { name: "Logout", icon: LogOut, href: "/dashboard"   },
-    
-  ]
+    { name: "Logout", icon: LogOut, href: "/dashboard" },
+  ];
 
   return (
     <>
-  
-      <button onClick={toggleSidebar} className="fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md md:hidden">
+      <button
+        onClick={toggleSidebar}
+        className="fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md md:hidden"
+      >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
-
 
       <aside
         className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
@@ -36,11 +46,11 @@ const Sidebar = () => {
         }`}
       >
         <div className="flex flex-col h-full">
-    
           <div className="px-6 py-6 border-b">
-            <h2 className="text-xl font-semibold text-gray-800">Mi Aplicación</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Mi Aplicación
+            </h2>
           </div>
-
 
           <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
             {menuItems.map((item) => (
@@ -54,7 +64,6 @@ const Sidebar = () => {
               </Link>
             ))}
           </nav>
-
 
           <div className="px-6 py-4 border-t">
             <div className="flex items-center">
@@ -70,10 +79,14 @@ const Sidebar = () => {
         </div>
       </aside>
 
-   
-      {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden" onClick={toggleSidebar} />}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
     </>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

@@ -2,8 +2,13 @@
 
 import React, { memo } from "react";
 
-const LoginView = ({ message, handleChange, onSubmit, buttonDisabled }) => {
-  console.log(message);
+const LoginView = ({
+  message,
+  handleChange,
+  onSubmit,
+  buttonDisabled,
+  loading,
+}) => {
   return (
     <div className="flex flex-col md:flex-row w-full h-screen">
       <div className="bg-gradient-to-b from-blue-500 to-blue-900 md:w-[60%] w-full h-full flex items-center justify-center p-4">
@@ -17,12 +22,14 @@ const LoginView = ({ message, handleChange, onSubmit, buttonDisabled }) => {
           </button>
         </div>
       </div>
+
       <div className="bg-white md:w-[40%] w-full h-full flex items-center justify-center p-4">
         <div className="flex flex-col items-center justify-center w-full h-full">
           <h1 className="text-3xl font-bold text-gray-700 text-center">
             Hello Again
           </h1>
           <h2 className="text-gray-500 text-center">Welcome back!</h2>
+
           <input
             onChange={handleChange}
             type="text"
@@ -30,6 +37,7 @@ const LoginView = ({ message, handleChange, onSubmit, buttonDisabled }) => {
             placeholder="Email Address"
             className="border-2 text-gray-800 border-gray-300 rounded-full p-2 w-3/4 md:w-1/2 mt-4"
           />
+
           <input
             onChange={handleChange}
             type="password"
@@ -37,9 +45,11 @@ const LoginView = ({ message, handleChange, onSubmit, buttonDisabled }) => {
             placeholder="Password"
             className="border-2 text-gray-800 border-gray-300 rounded-full p-2 w-3/4 md:w-1/2 mt-4"
           />
+
           {message && (
             <p className="text-red-500 text-center mt-2">{message}</p>
           )}
+
           <button
             onClick={onSubmit}
             disabled={buttonDisabled}
@@ -49,8 +59,9 @@ const LoginView = ({ message, handleChange, onSubmit, buttonDisabled }) => {
                 : "hover:bg-blue-600"
             }`}
           >
-            Login
+            {loading ? "Cargando..." : "Login"}
           </button>
+
           <p className="text-gray-600 mt-2 text-center">Forgot password?</p>
         </div>
       </div>

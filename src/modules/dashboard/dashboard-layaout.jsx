@@ -3,17 +3,31 @@
 import { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
+import Cookies from "js-cookie";
 import Nav from "../../shared/components/nav";
 import Sidebar from "@/shared/components/sidebar";
 
 export function DashboardLayout({ children }) {
   const { auth, logout } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const router = useRouter(); 
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!auth?.logged  && !token) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      console.warn("No hay token. Redirigiendo a la página de inicio...");
+      router.push("/");
+      return;
+    }
+
+    const tokenExpiration = Cookies.get("token_expiration");
+    const currentTime = Date.now();
+
+    if (tokenExpiration && currentTime > parseInt(tokenExpiration, 10)) {
+      console.warn("El token ha expirado. Eliminando token y redirigiendo...");
+      Cookies.remove("token");
+      Cookies.remove("token_expiration");
       router.push("/");
     }
   }, [auth, router]);

@@ -1,5 +1,5 @@
 
-const baseUrl = 'http://localhost:3021';
+const baseUrl = 'https://api-prueba-v131.onrender.com';
 export const fetchSinToken = async (endpoint, data, method = 'GET') => {
   const url = `${baseUrl}/${endpoint}`;
   try {
@@ -19,7 +19,6 @@ export const fetchSinToken = async (endpoint, data, method = 'GET') => {
     } catch {
       responseData = { message: text };
     }
-    // Si no fue exitosa la respuesta
     if (!resp.ok) {
       throw new Error(
         responseData.message || `Error en la respuesta: ${resp.status}`

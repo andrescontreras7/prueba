@@ -1,7 +1,8 @@
 "use client";
 
 import { fetchSinToken } from "@/helpers/fetch";
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, { createContext, useState } from "react";
+import Cookies from "js-cookie";
 
 export const AuthContext = createContext();
 
@@ -19,12 +20,18 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const resp = await fetchSinToken("login", { email, password }, "POST");
-      if (resp.message && resp.message === "Invalid credentials") {
-        console.error("Error en login:", resp.message);
-        return false;
+
+      if (!resp || !resp.token) {
+        return {
+          success: false,
+          message: "Error al iniciar sesión. Inténtalo más tarde.",
+        };
       }
 
-      localStorage.setItem("token", resp.token);
+      // Guardado de expiracion dee token
+      Cookies.set("token", resp.token, { expires: 1 });
+      Cookies.set("token_expiration", Date.now() + 24 * 60 * 60 * 1000);
+
       const { user } = resp;
 
       setAuth({
@@ -35,21 +42,33 @@ export const AuthProvider = ({ children }) => {
         email: user.email,
       });
 
-      return true;
+      return { success: true };
     } catch (error) {
-      console.error("Error en login:", error.message);
-      return false;
+      const isInvalidCreds = error.message === "Invalid credentials";
+      return {
+        success: false,
+        message: isInvalidCreds
+          ? "Credenciales incorrectas. Por favor, verifica tu correo y contraseña."
+          : "Ocurrió un error inesperado. Por favor, inténtalo mas tarde.",
+      };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    try {
+      Cookies.remove("token");
+      Cookies.remove("token_expiration");
 
-    
-    setAuth({
-      checking: false,
-      logged: false,
-    });
+      setAuth({
+        checking: false,
+        logged: false,
+      });
+    } catch (error) {
+      console.error(
+        "Error al cerrar sesión:",
+        error.message || "Error desconocido"
+      );
+    }
   };
 
   return (
@@ -57,7 +76,6 @@ export const AuthProvider = ({ children }) => {
       value={{
         auth,
         login,
-
         logout,
       }}
     >
